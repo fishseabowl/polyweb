@@ -1,0 +1,69 @@
+import { useState } from "react";
+import UserSetup from "./App/UserSetup";
+import Login from "./App/Login";
+import MarketList from "./App/MarketList";
+import BetHistory from "./App/BetHistory";
+
+interface Bet {
+  id: string;
+  outcome: string;
+  amount: number;
+  name: string;
+}
+
+const App = () => {
+  const [account, setAccount] = useState<string | null>(null); // Default to null if no login
+  const [bets, setBets] = useState<Bet[]>([]);
+
+  // State to store credentials
+  const [storedUsername, setStoredUsername] = useState<string | null>(null);
+  const [storedPassword, setStoredPassword] = useState<string | null>(null);
+  const [isSettingUp, setIsSettingUp] = useState(false); // Controls account setup
+
+  // Handle account setup
+  const handleSetup = (username: string, password: string) => {
+    console.log("Setting up account with username:", username); // Debugging log
+    setStoredUsername(username);
+    setStoredPassword(password);
+    setIsSettingUp(false); // After setup, go back to login page
+  };
+
+  // Handle login
+  const handleLogin = (userAccount: string) => {
+    console.log("Logging in with username:", userAccount); // Debugging log
+    setAccount(userAccount); // Set account on successful login
+  };
+
+  // Handle placing a bet
+  const handleBet = (
+    id: string,
+    name: string,
+    outcome: string,
+    amount: number,
+  ) => {
+    setBets([...bets, { id, name, outcome, amount }]);
+  };
+
+  // Handle navigation to the setup page
+  const handleGoToSetup = () => {
+    setIsSettingUp(true);
+  };
+
+  return (
+    <div className="App">
+      <div className="flex flex-row gap-8">
+        {/* MarketList on the left */}
+        <div className="flex-1">
+          <MarketList onBet={handleBet} />
+        </div>
+
+        {/* BetHistory on the right */}
+        <div className="flex-1">
+          <BetHistory bets={bets} />
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default App;
