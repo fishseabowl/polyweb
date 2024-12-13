@@ -3,6 +3,7 @@ import UserSetup from "./App/UserSetup";
 import Login from "./App/Login";
 import MarketList from "./App/MarketList";
 import BetHistory from "./App/BetHistory";
+import WinnerHistory from "./App/WinnerHistory";
 
 interface Bet {
   id: string;
@@ -57,10 +58,18 @@ const App = () => {
           <MarketList onBet={handleBet} />
         </div>
 
-        {/* BetHistory on the right */}
-        <div className="flex-1">
-          <BetHistory bets={bets} />
-        </div>
+        {/* BetHistory and winners on the right */}
+        <div className="flex-1 flex flex-col gap-4">
+        {/* BetHistory at the top */}
+      <div>
+        <BetHistory bets={bets} />
+      </div>
+
+      {/* WinnerHistory below BetHistory */}
+      <div>
+        <WinnerHistory bets={bets} />
+      </div>
+    </div>
       </div>
     </div>
   );
