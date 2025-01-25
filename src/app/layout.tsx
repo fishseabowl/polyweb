@@ -7,7 +7,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Polycoin",
-  description: "Polycoin is a predicted website",
+  description: "Web3 predicted website",
 };
 
 export default function RootLayout({
