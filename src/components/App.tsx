@@ -21,20 +21,6 @@ const App = () => {
   const [storedPassword, setStoredPassword] = useState<string | null>(null);
   const [isSettingUp, setIsSettingUp] = useState(false); // Controls account setup
 
-  // Handle account setup
-  const handleSetup = (username: string, password: string) => {
-    console.log("Setting up account with username:", username); // Debugging log
-    setStoredUsername(username);
-    setStoredPassword(password);
-    setIsSettingUp(false); // After setup, go back to login page
-  };
-
-  // Handle login
-  const handleLogin = (userAccount: string) => {
-    console.log("Logging in with username:", userAccount); // Debugging log
-    setAccount(userAccount); // Set account on successful login
-  };
-
   // Handle placing a bet
   const handleBet = (
     id: string,
