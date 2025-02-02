@@ -2,6 +2,7 @@
 import Head from "next/head";
 import dynamic from "next/dynamic";
 import App from "../components/App";
+import SideNav from "../components/SideNav"; // Import SideNav
 import { useBlockNumber, useAccount, useBalance } from "@starknet-react/core";
 
 const WalletBar = dynamic(() => import("../components/WalletBar"), {
@@ -22,38 +23,41 @@ const Page: React.FC = () => {
   });
 
   return (
-    <div className="h-screen flex flex-col justify-center items-center">
-      <Head>
-        <title>Polycoin</title>
-      </Head>
+    <div className="h-screen flex">
+      {/* Sidebar Navigation */}
+      <SideNav />
 
-      <div className="absolute top-4 right-4">
-        <WalletBar />
-      </div>
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col justify-center items-center">
+        <Head>
+          <title>Polycoin</title>
+        </Head>
 
-      {!balanceIsLoading && !balanceIsError && balanceData ? (
-        <div className="absolute top-[4.5rem] right-4 p-4 w-auto max-w-md bg-white text-blue-500 border border-black">
-          <p>Token: {balanceData.symbol} </p>
-          <p>Balance: {Number(balanceData.formatted).toFixed(8)}</p>
+        <div className="absolute top-4 right-4 p-4 bg-blue-500 text-white rounded-lg shadow-lg">
+          <WalletBar />
         </div>
-      ) : balanceIsLoading ? (
-        <div className="absolute top-[4.5rem] right-4">
-          <p>Loading balance...</p>
-        </div>
-      ) : (
-        <div className="absolute top-[4.5rem] right-4">
-          <p>Connecting Wallet...</p>
-        </div>
-      )}
 
-      {
+        {!balanceIsLoading && !balanceIsError && balanceData ? (
+          <div className="absolute top-[4.5rem] right-4 p-4 w-auto max-w-md bg-white text-blue-500 border border-black">
+            <p>Token: {balanceData.symbol} </p>
+            <p>Balance: {Number(balanceData.formatted).toFixed(8)}</p>
+          </div>
+        ) : balanceIsLoading ? (
+          <div className="absolute top-[4.5rem] right-4">
+            <p>Loading balance...</p>
+          </div>
+        ) : (
+          <div className="absolute top-[4.5rem] right-4">
+            <p>Connecting Wallet...</p>
+          </div>
+        )}
+
         <div className="relative flex flex-col items-center mt-[20rem]">
-          {/* App component below the WalletBar with some margin */}
           <div className="flex flex-col items-center mt-[2rem]">
             <App />
           </div>
         </div>
-      }
+      </div>
     </div>
   );
 };
