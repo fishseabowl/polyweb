@@ -5,7 +5,7 @@ const SideNav: React.FC = () => {
         <h2 className="text-xl font-bold">Polycoin</h2>
         <ul className="mt-4 space-y-2">
           <li><a href="#" className="block px-2 py-1">Home</a></li>
-          <li><a href="#" className="block px-2 py-1">Predict</a></li>
+          <li><a href="#" className="block px-2 py-1">Prediction</a></li>
           <li><a href="#" className="block px-2 py-1">Question</a></li>
         </ul>
       </div>
