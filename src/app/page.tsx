@@ -30,7 +30,7 @@ const Page: React.FC = () => {
       {/* Main Content */}
       <div className="flex-1 flex flex-col justify-center items-center">
         <Head>
-          <title>Polycoin</title>
+          <title>PolyiChain</title>
         </Head>
 
         <div className="absolute top-4 right-4 p-4 bg-blue-500 text-white rounded-lg shadow-lg">
