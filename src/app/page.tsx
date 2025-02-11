@@ -2,8 +2,11 @@
 import Head from "next/head";
 import dynamic from "next/dynamic";
 import App from "../components/App";
+import Prediction from "../components/Prediction"; // Prediction Market Page
+import Question from "../components/Question"; // Q&A Section
 import SideNav from "../components/SideNav"; // Import SideNav
 import { useBlockNumber, useAccount, useBalance } from "@starknet-react/core";
+import { useState } from "react";
 
 const WalletBar = dynamic(() => import("../components/WalletBar"), {
   ssr: false,
@@ -22,10 +25,12 @@ const Page: React.FC = () => {
     watch: true,
   });
 
+  const [selectedPage, setSelectedPage] = useState("home");
+
   return (
     <div className="h-screen flex">
       {/* Sidebar Navigation */}
-      <SideNav />
+      <SideNav onSelect={(page) => setSelectedPage(page)} />
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col justify-center items-center">
@@ -53,8 +58,26 @@ const Page: React.FC = () => {
         )}
 
         <div className="relative flex flex-col items-center mt-[20rem]">
-          <div className="flex flex-col items-center mt-[2rem]">
-            <App />
+          <div className="flex flex-col items-center mt-12">
+            {selectedPage === "home" && <App />}
+
+            {selectedPage === "prediction" &&
+              (!balanceIsLoading && !balanceIsError && balanceData ? (
+                <Prediction />
+              ) : (
+                <p className="text-red-500 text-lg">
+                  Please connect your wallet first.
+                </p>
+              ))}
+
+            {selectedPage === "question" &&
+              (!balanceIsLoading && !balanceIsError && balanceData ? (
+                <Question />
+              ) : (
+                <p className="text-red-500 text-lg">
+                  Please connect your wallet first.
+                </p>
+              ))}
           </div>
         </div>
       </div>
@@ -63,3 +86,4 @@ const Page: React.FC = () => {
 };
 
 export default Page;
+// Removed conflicting local useState function declaration
