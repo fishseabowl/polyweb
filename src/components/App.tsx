@@ -1,62 +1,39 @@
-import { useState } from "react";
-import UserSetup from "./App/UserSetup";
-import Login from "./App/Login";
-import MarketList from "./App/MarketList";
-import BetHistory from "./App/BetHistory";
-import WinnerHistory from "./App/WinnerHistory";
+import React from "react";
 
-interface Bet {
-  id: string;
-  outcome: string;
-  amount: number;
-  name: string;
-}
+type Question = {
+  title: string;
+  description: string;
+  expiration: string;
+  totalBids: number;
+  highestBid: number;
+};
 
-const App = () => {
-  const [account, setAccount] = useState<string | null>(null); // Default to null if no login
-  const [bets, setBets] = useState<Bet[]>([]);
+type AppProps = {
+  questions: Question[];
+};
 
-  // State to store credentials
-  const [storedUsername, setStoredUsername] = useState<string | null>(null);
-  const [storedPassword, setStoredPassword] = useState<string | null>(null);
-  const [isSettingUp, setIsSettingUp] = useState(false); // Controls account setup
-
-  // Handle placing a bet
-  const handleBet = (
-    id: string,
-    name: string,
-    outcome: string,
-    amount: number,
-  ) => {
-    setBets([...bets, { id, name, outcome, amount }]);
-  };
-
-  // Handle navigation to the setup page
-  const handleGoToSetup = () => {
-    setIsSettingUp(true);
-  };
-
+const App: React.FC<AppProps> = ({ questions }) => {
   return (
-    <div className="App">
-      <div className="flex flex-row gap-8">
-        {/* MarketList on the left */}
-        <div className="flex-1">
-          <MarketList onBet={handleBet} />
-        </div>
+    <div className="p-6">
+      <h2 className="text-2xl font-bold mb-4">User Question Bid Summary</h2>
 
-        {/* BetHistory and winners on the right */}
-        <div className="flex-1 flex flex-col gap-4">
-          {/* BetHistory at the top */}
-          <div>
-            <BetHistory bets={bets} />
-          </div>
-
-          {/* WinnerHistory below BetHistory */}
-          <div>
-            <WinnerHistory bets={bets} />
-          </div>
-        </div>
-      </div>
+      {questions.length === 0 ? (
+        <p className="text-gray-500">No questions have been submitted yet.</p>
+      ) : (
+        <ul className="space-y-4">
+          {questions.map((q, index) => (
+            <li key={index} className="p-4 border rounded shadow-lg bg-white">
+              <h3 className="text-lg font-semibold">{q.title}</h3>
+              <p className="text-gray-600">{q.description}</p>
+              <p className="text-sm text-gray-500">Expires on: {q.expiration}</p>
+              <div className="mt-2 text-blue-600">
+                <p>Total Bids: {q.totalBids}</p>
+                <p>Highest Bid: {q.highestBid} PolyTokens</p>
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 };
