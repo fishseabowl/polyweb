@@ -2,7 +2,7 @@ import React, { useState } from "react";
 
 interface MarketCardProps {
   id: string;
-  name: string;
+  title: string;
   onBet: (id: string, name: string, outcome: string, amount: number) => void;
   username: string; // Pass the username prop to save the bet history
 }
@@ -33,7 +33,7 @@ const saveBetHistory = async (
 
 const MarketCard: React.FC<MarketCardProps> = ({
   id,
-  name,
+  title,
   onBet,
   username,
 }) => {
@@ -42,7 +42,7 @@ const MarketCard: React.FC<MarketCardProps> = ({
 
   const handleBet = async () => {
     // Call the onBet callback to process the bet (e.g., interacting with a smart contract)
-    onBet(id, name, outcome, amount);
+    onBet(id, title, outcome, amount);
 
     // Create a new bet entry
     const currentBet = {
@@ -58,7 +58,7 @@ const MarketCard: React.FC<MarketCardProps> = ({
 
   return (
     <div className="market-card border border-gray-300 rounded-lg p-4 bg-white hover:shadow-lg transition-all">
-      <h2 className="text-lg font-semibold text-gray-800 mb-4">{name}</h2>
+      <h2 className="text-lg font-semibold text-gray-800 mb-4">{title}</h2>
 
       <div className="mb-4">
         <label className="block text-sm font-medium text-black">Outcome:</label>

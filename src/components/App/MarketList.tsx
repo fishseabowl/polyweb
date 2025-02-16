@@ -3,9 +3,9 @@ import { useState } from "react";
 import MarketCard from "./MarketCard";
 
 const markets = [
-  { id: "1", name: "Bitcoin is above $100,000 in 12/30/2025" },
-  { id: "2", name: "Ethereum is above $3,500 in 12/30/2025" },
-  { id: "3", name: "Solana is above $300 in 12/30/2025" },
+  { id: "1", title: "Bitcoin is above $100,000 in 12/30/2025" },
+  { id: "2", title: "Ethereum is above $3,500 in 12/30/2025" },
+  { id: "3", title: "Solana is above $300 in 12/30/2025" },
 ];
 
 interface MarketListProps {
@@ -23,7 +23,7 @@ const MarketList = ({ onBet }: MarketListProps) => {
           <MarketCard
             key={market.id}
             id={market.id}
-            name={market.name}
+            title={market.title}
             onBet={onBet}
             username={""}
           />
