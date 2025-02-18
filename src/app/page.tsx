@@ -59,7 +59,7 @@ const Page: React.FC = () => {
 
         <div className="relative flex flex-col items-center mt-[20rem]">
           <div className="flex flex-col items-center mt-12">
-            {selectedPage === "home" && <App />}
+            {selectedPage === "home" && <App questions={[]} />}
 
             {selectedPage === "prediction" &&
               (!balanceIsLoading && !balanceIsError && balanceData ? (

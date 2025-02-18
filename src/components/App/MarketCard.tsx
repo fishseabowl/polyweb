@@ -3,6 +3,8 @@ import React, { useState } from "react";
 interface MarketCardProps {
   id: string;
   title: string;
+  description?: string;
+  expiration: string;
   onBet: (id: string, name: string, outcome: string, amount: number) => void;
   username: string; // Pass the username prop to save the bet history
 }
