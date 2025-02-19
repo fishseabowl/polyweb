@@ -1,18 +1,18 @@
 import { useState } from "react";
+import {MarketWithCreator} from "./types";
+import MarketList from "./App/MarketList";
 
-type Question = {
-  title: string;
-  description: string;
-  expiration: string;
-};
 
 const Question: React.FC = () => {
-  const [question, setQuestion] = useState<Question>({
+  const [question, setQuestion] = useState<MarketWithCreator>({
+    id: "",
     title: "",
     description: "",
     expiration: "",
+    creator: "",
   });
-  const [questions, setQuestions] = useState<Question[]>([]); // Store submitted questions
+
+  const [questions, setQuestions] = useState<MarketWithCreator[]>([]); // Store submitted questions
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setQuestion({ ...question, [e.target.name]: e.target.value });
@@ -23,7 +23,7 @@ const Question: React.FC = () => {
     if (!question.title || !question.expiration) return;
 
     setQuestions([...questions, question]); // Save question
-    setQuestion({ title: "", description: "", expiration: "" }); // Reset form
+    setQuestion({id: "", title: "", description: "", expiration: "" , creator:""}); // Reset form
   };
 
   return (
@@ -37,7 +37,7 @@ const Question: React.FC = () => {
           name="title"
           value={question.title}
           onChange={handleChange}
-          placeholder="Enter your question..."
+          placeholder="Enter your prediction..."
           className="w-full p-2 border rounded"
           required
         />

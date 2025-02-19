@@ -2,11 +2,11 @@
 import { useState } from "react";
 import MarketCard from "./MarketCard";
 
-const markets = [
-  { id: "1", title: "Bitcoin is above $100,000 in 12/30/2025" },
-  { id: "2", title: "Ethereum is above $3,500 in 12/30/2025" },
-  { id: "3", title: "Solana is above $300 in 12/30/2025" },
-];
+const markets = (async () => {
+  const response = await fetch("http://localhost:4000/api/markets");
+  const data = await response.json();
+  return data;
+});
 
 interface MarketListProps {
   onBet: (id: string, name: string, outcome: string, amount: number) => void;

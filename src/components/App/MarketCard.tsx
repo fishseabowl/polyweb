@@ -1,14 +1,7 @@
 import React, { useState } from "react";
+import { MarketWithBets } from "../types";
 
-interface MarketCardProps {
-  id: string;
-  title: string;
-  description?: string;
-  expiration: string;
-  onBet: (id: string, name: string, outcome: string, amount: number) => void;
-  username: string; // Pass the username prop to save the bet history
-}
-
+// Function to save bet to backend
 const saveBetHistory = async (
   username: string,
   currentBet: {
@@ -16,13 +9,11 @@ const saveBetHistory = async (
     outcome: string;
     amount: number;
     date: string;
-  },
+  }
 ) => {
   const response = await fetch("http://localhost:4000/api/save-bet", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ username, currentBet }), // Only the current bet
   });
   const data = await response.json();
@@ -33,17 +24,30 @@ const saveBetHistory = async (
   }
 };
 
+// Props now include an `onBet` function for updating state
+interface MarketCardProps extends MarketWithBets {
+  username: string;
+  onBet: (marketId: string, title: string, outcome: string, amount: number) => void;
+}
+
 const MarketCard: React.FC<MarketCardProps> = ({
   id,
   title,
-  onBet,
+  bets,
+  totalBetAmount,
   username,
+  onBet,
 }) => {
   const [outcome, setOutcome] = useState<string>("YES");
   const [amount, setAmount] = useState<number>(0);
 
   const handleBet = async () => {
-    // Call the onBet callback to process the bet (e.g., interacting with a smart contract)
+    if (amount <= 0) {
+      alert("Please enter a valid bet amount.");
+      return;
+    }
+
+    // Update state in parent
     onBet(id, title, outcome, amount);
 
     // Create a new bet entry
@@ -62,6 +66,7 @@ const MarketCard: React.FC<MarketCardProps> = ({
     <div className="market-card border border-gray-300 rounded-lg p-4 bg-white hover:shadow-lg transition-all">
       <h2 className="text-lg font-semibold text-gray-800 mb-4">{title}</h2>
 
+      {/* Betting Form */}
       <div className="mb-4">
         <label className="block text-sm font-medium text-black">Outcome:</label>
         <select
@@ -75,9 +80,7 @@ const MarketCard: React.FC<MarketCardProps> = ({
       </div>
 
       <div className="mb-4">
-        <label className="block text-sm font-medium text-black">
-          Bet Amount:
-        </label>
+        <label className="block text-sm font-medium text-black">Bet Amount:</label>
         <input
           type="number"
           value={amount}
@@ -92,6 +95,24 @@ const MarketCard: React.FC<MarketCardProps> = ({
       >
         Place Bet
       </button>
+
+      {/* Bet History */}
+      <div className="mt-4 p-3 border-t border-gray-300">
+        <h3 className="text-md font-semibold text-gray-700">Bet History</h3>
+        <p className="text-sm text-gray-500">Total Bet Amount: {totalBetAmount} PolyTokens</p>
+
+        {bets.length === 0 ? (
+          <p className="text-gray-500 text-sm">No bets placed yet.</p>
+        ) : (
+          <ul className="mt-2 space-y-2">
+            {bets.map((bet, index) => (
+              <li key={index} className="text-gray-600 text-sm">
+                {bet.user} bet {bet.amount} PolyTokens on {bet.outcome}
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
     </div>
   );
 };
