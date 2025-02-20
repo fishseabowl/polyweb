@@ -99,7 +99,7 @@ const MarketCard: React.FC<MarketCardProps> = ({
       {/* Bet History */}
       <div className="mt-4 p-3 border-t border-gray-300">
         <h3 className="text-md font-semibold text-gray-700">Bet History</h3>
-        <p className="text-sm text-gray-500">Total Bet Amount: {totalBetAmount} PolyTokens</p>
+        <p className="text-sm text-gray-500">Total Bet Amount: {totalBetAmount} STRK</p>
 
         {bets.length === 0 ? (
           <p className="text-gray-500 text-sm">No bets placed yet.</p>

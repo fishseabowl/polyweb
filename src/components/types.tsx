@@ -7,7 +7,7 @@ export interface MarketCardProps {
   
 // ✅ Component 1: Market with Betting Information
 export interface MarketWithBets extends MarketCardProps {
-    bets: { user: string; amount: number }[]; // List of bets
+    bets: { user: string; amount: number; outcome: string; }[]; // List of bets
     totalBetAmount: number; // Computed field
 }
   
