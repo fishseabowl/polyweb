@@ -1,6 +1,4 @@
 import { useState } from "react";
-import UserSetup from "./App/UserSetup";
-import Login from "./App/Login";
 import MarketList from "./App/MarketList";
 import BetHistory from "./App/BetHistory";
 import WinnerHistory from "./App/WinnerHistory";

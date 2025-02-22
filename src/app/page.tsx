@@ -72,7 +72,7 @@ const Page: React.FC = () => {
 
             {selectedPage === "question" &&
               (!balanceIsLoading && !balanceIsError && balanceData ? (
-                <Question />
+                <Question userAddr={userAddress || ""} />
               ) : (
                 <p className="text-red-500 text-lg">
                   Please connect your wallet first.

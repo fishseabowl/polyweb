@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
 import { MarketWithCreator } from "./types";
-import MarketList from "./App/MarketList";
-import { useAccount } from "wagmi"; // Import wallet hook
 
-const Question: React.FC = () => {
-  const { address: userAddress, isConnected } = useAccount(); // Get wallet info
-  const [username, setUsername] = useState<string>("");
+interface QuestionProps {
+  userAddr: string; // Get username from Page.tsx
+}
+
+const Question: React.FC<QuestionProps> = ({userAddr}) => {
 
   const [question, setQuestion] = useState<MarketWithCreator>({
     id: "",
@@ -34,14 +34,6 @@ const Question: React.FC = () => {
     fetchNextQuestionId();
   }, []);
 
-  // 🔹 Verify wallet username
-  useEffect(() => {
-    if (isConnected && userAddress) {
-      setUsername(userAddress); // Assuming username is wallet address
-      setQuestion((prev) => ({ ...prev, creator: userAddress }));
-    }
-  }, [isConnected, userAddress]);
-
   // 🔹 Handle input changes
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setQuestion({ ...question, [e.target.name]: e.target.value });
@@ -51,7 +43,7 @@ const Question: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!isConnected) {
+    if (!userAddr) {
       alert("Please connect your wallet first.");
       return;
     }
@@ -71,7 +63,7 @@ const Question: React.FC = () => {
       const data = await response.json();
       if (data.success) {
         setQuestions([...questions, question]); // Save question in UI
-        setQuestion({ id: "", title: "", description: "", expiration: "", creator: username });
+        setQuestion({ id: "", title: "", description: "", expiration: "", creator: userAddr });
         alert("Question created successfully!");
       } else {
         alert("Failed to save question.");
@@ -84,11 +76,6 @@ const Question: React.FC = () => {
   return (
     <div className="p-6">
       <h2 className="text-xl font-bold mb-4">Create a Prediction Question</h2>
-
-      {/* 🔹 Show Wallet Connection Status */}
-      <p className="mb-2 text-gray-500">
-        Wallet: {isConnected ? userAddress : "Not Connected"}
-      </p>
 
       {/* 🔹 Form to Create a Question */}
       <form onSubmit={handleSubmit} className="space-y-4">
