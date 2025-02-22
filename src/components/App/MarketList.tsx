@@ -2,11 +2,11 @@
 import { useState } from "react";
 import MarketCard from "./MarketCard";
 
-const markets = (async () => {
+const markets = async () => {
   const response = await fetch("http://localhost:4000/api/markets");
   const data = await response.json();
   return data;
-});
+};
 
 interface MarketListProps {
   onBet: (id: string, name: string, outcome: string, amount: number) => void;

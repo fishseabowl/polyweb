@@ -5,8 +5,7 @@ interface QuestionProps {
   userAddr: string; // Get username from Page.tsx
 }
 
-const Question: React.FC<QuestionProps> = ({userAddr}) => {
-
+const Question: React.FC<QuestionProps> = ({ userAddr }) => {
   const [question, setQuestion] = useState<MarketWithCreator>({
     id: "",
     title: "",
@@ -21,7 +20,9 @@ const Question: React.FC<QuestionProps> = ({userAddr}) => {
   useEffect(() => {
     const fetchNextQuestionId = async () => {
       try {
-        const response = await fetch("http://localhost:4000/api/next-question-id");
+        const response = await fetch(
+          "http://localhost:4000/api/next-question-id",
+        );
         const data = await response.json();
         if (data.success) {
           setQuestion((prev) => ({ ...prev, id: data.nextId }));
@@ -35,14 +36,16 @@ const Question: React.FC<QuestionProps> = ({userAddr}) => {
   }, []);
 
   // 🔹 Handle input changes
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
     setQuestion({ ...question, [e.target.name]: e.target.value });
   };
 
   // 🔹 Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!userAddr) {
       alert("Please connect your wallet first.");
       return;
@@ -63,7 +66,13 @@ const Question: React.FC<QuestionProps> = ({userAddr}) => {
       const data = await response.json();
       if (data.success) {
         setQuestions([...questions, question]); // Save question in UI
-        setQuestion({ id: "", title: "", description: "", expiration: "", creator: userAddr });
+        setQuestion({
+          id: "",
+          title: "",
+          description: "",
+          expiration: "",
+          creator: userAddr,
+        });
         alert("Question created successfully!");
       } else {
         alert("Failed to save question.");
@@ -103,7 +112,10 @@ const Question: React.FC<QuestionProps> = ({userAddr}) => {
           className="w-full p-2 border rounded"
           required
         />
-        <button type="submit" className="bg-blue-500 text-white p-2 rounded w-full">
+        <button
+          type="submit"
+          className="bg-blue-500 text-white p-2 rounded w-full"
+        >
           Submit Question
         </button>
       </form>

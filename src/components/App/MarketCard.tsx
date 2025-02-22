@@ -9,7 +9,7 @@ const saveBetHistory = async (
     outcome: string;
     amount: number;
     date: string;
-  }
+  },
 ) => {
   const response = await fetch("http://localhost:4000/api/save-bet", {
     method: "POST",
@@ -27,7 +27,12 @@ const saveBetHistory = async (
 // Props now include an `onBet` function for updating state
 interface MarketCardProps extends MarketWithBets {
   username: string;
-  onBet: (marketId: string, title: string, outcome: string, amount: number) => void;
+  onBet: (
+    marketId: string,
+    title: string,
+    outcome: string,
+    amount: number,
+  ) => void;
 }
 
 const MarketCard: React.FC<MarketCardProps> = ({
@@ -80,7 +85,9 @@ const MarketCard: React.FC<MarketCardProps> = ({
       </div>
 
       <div className="mb-4">
-        <label className="block text-sm font-medium text-black">Bet Amount:</label>
+        <label className="block text-sm font-medium text-black">
+          Bet Amount:
+        </label>
         <input
           type="number"
           value={amount}
@@ -99,7 +106,9 @@ const MarketCard: React.FC<MarketCardProps> = ({
       {/* Bet History */}
       <div className="mt-4 p-3 border-t border-gray-300">
         <h3 className="text-md font-semibold text-gray-700">Bet History</h3>
-        <p className="text-sm text-gray-500">Total Bet Amount: {totalBetAmount} STRK</p>
+        <p className="text-sm text-gray-500">
+          Total Bet Amount: {totalBetAmount} STRK
+        </p>
 
         {bets.length === 0 ? (
           <p className="text-gray-500 text-sm">No bets placed yet.</p>

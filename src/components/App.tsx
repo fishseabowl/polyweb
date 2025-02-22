@@ -37,11 +37,20 @@ const App: React.FC = () => {
       ) : (
         <ul className="space-y-4">
           {markets.map((market) => (
-            <li key={market.id} className="p-4 border rounded shadow-lg bg-white">
+            <li
+              key={market.id}
+              className="p-4 border rounded shadow-lg bg-white"
+            >
               <h3 className="text-lg font-semibold">{market.title}</h3>
-              <p className="text-gray-600">{market.description || "No description provided."}</p>
-              <p className="text-sm text-gray-500">Expires on: {market.expiration}</p>
-              <p className="text-sm text-blue-600 font-semibold">Total Bet Amount: {market.totalBetAmount} ETH</p>
+              <p className="text-gray-600">
+                {market.description || "No description provided."}
+              </p>
+              <p className="text-sm text-gray-500">
+                Expires on: {market.expiration}
+              </p>
+              <p className="text-sm text-blue-600 font-semibold">
+                Total Bet Amount: {market.totalBetAmount} ETH
+              </p>
             </li>
           ))}
         </ul>
