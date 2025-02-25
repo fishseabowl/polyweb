@@ -5,7 +5,7 @@ import App from "../components/App";
 import Prediction from "../components/Prediction"; // Prediction Market Page
 import Question from "../components/Question"; // Q&A Section
 import SideNav from "../components/SideNav"; // Import SideNav
-import { useBlockNumber, useAccount, useBalance } from "@starknet-react/core";
+import { useAccount, useBalance } from "@starknet-react/core";
 import { useState } from "react";
 
 const WalletBar = dynamic(() => import("../components/WalletBar"), {
@@ -51,14 +51,18 @@ const Page: React.FC = () => {
           <div className="absolute top-[4.5rem] right-4">
             <p>Loading balance...</p>
           </div>
+        ) : balanceIsError ? (
+          <div className="absolute top-[4.5rem] right-4">
+            <p>Error: {balanceError?.message}</p>
+          </div>
         ) : (
           <div className="absolute top-[4.5rem] right-4">
             <p>Connecting Wallet...</p>
           </div>
         )}
 
-        <div className="relative flex flex-col items-center mt-[20rem]">
-          <div className="flex flex-col items-center mt-12">
+        <div className="relative flex flex-col items-center min-h-screen mt-12">
+          <div className="flex flex-col items-center mt-4">
             {selectedPage === "home" && <App />}
 
             {selectedPage === "prediction" &&

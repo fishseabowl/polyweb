@@ -15,7 +15,7 @@ const WinnerHistory = ({ bets }: WinnerHistoryProps) => {
         <ul>
           {winners.map((winner, index) => (
             <li key={index}>
-              {winner.name} - Won {winner.amount} ETH
+              {winner.name} - Won {winner.amount} STRK
             </li>
           ))}
         </ul>

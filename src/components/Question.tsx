@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { MarketWithCreator } from "./types";
 
 interface QuestionProps {
@@ -14,26 +14,23 @@ const Question: React.FC<QuestionProps> = ({ userAddr }) => {
     creator: "",
   });
 
+  const shortenedAddress = useMemo(() => {
+    if (!userAddr) return "";
+    return `${userAddr.slice(0, 6)}...${userAddr.slice(-4)}`;
+  }, [userAddr]);
+
   const [questions, setQuestions] = useState<MarketWithCreator[]>([]); // Store submitted questions
 
-  // 🔹 Fetch next available question ID from server
-  useEffect(() => {
-    const fetchNextQuestionId = async () => {
-      try {
-        const response = await fetch(
-          "http://localhost:4000/api/next-question-id",
-        );
-        const data = await response.json();
-        if (data.success) {
-          setQuestion((prev) => ({ ...prev, id: data.nextId }));
-        }
-      } catch (error) {
-        console.error("Error fetching question ID:", error);
-      }
-    };
-
-    fetchNextQuestionId();
-  }, []);
+  const fetchNextQuestionId = async (): Promise<string | null> => {
+    try {
+      const response = await fetch("http://localhost:4000/api/next-question-id");
+      const data = await response.json();
+      return data.nextId || null;
+    } catch (error) {
+      console.error("Error fetching question ID:", error);
+      return null;
+    }
+  };
 
   // 🔹 Handle input changes
   const handleChange = (
@@ -56,6 +53,16 @@ const Question: React.FC<QuestionProps> = ({ userAddr }) => {
       return;
     }
 
+    // 🔹 Retrieve next question ID before submitting
+    const nextId = await fetchNextQuestionId();
+    if (!nextId) {
+      alert("Failed to retrieve question ID.");
+      return;
+    }
+    // 🔹 Save question to server
+    question.id = nextId;
+    question.creator = userAddr;
+
     try {
       const response = await fetch("http://localhost:4000/api/save-question", {
         method: "POST",
@@ -64,6 +71,8 @@ const Question: React.FC<QuestionProps> = ({ userAddr }) => {
       });
 
       const data = await response.json();
+      console.log("Server Response:", data);
+
       if (data.success) {
         setQuestions([...questions, question]); // Save question in UI
         setQuestion({
@@ -75,7 +84,9 @@ const Question: React.FC<QuestionProps> = ({ userAddr }) => {
         });
         alert("Question created successfully!");
       } else {
-        alert("Failed to save question.");
+        alert(
+          `Failed to save question. Server says: ${data.error || "Unknown error"}`,
+        );
       }
     } catch (error) {
       console.error("Error saving question:", error);
@@ -83,38 +94,40 @@ const Question: React.FC<QuestionProps> = ({ userAddr }) => {
   };
 
   return (
-    <div className="p-6">
-      <h2 className="text-xl font-bold mb-4">Create a Prediction Question</h2>
+    <div className="max-w-lg mx-auto mt-12 p-6 bg-white shadow-lg rounded-lg border border-gray-300">
+      <h2 className="text-2xl font-bold text-gray-900 mb-4">
+        Create a New Question
+      </h2>
 
-      {/* 🔹 Form to Create a Question */}
       <form onSubmit={handleSubmit} className="space-y-4">
         <input
           type="text"
           name="title"
           value={question.title}
           onChange={handleChange}
-          placeholder="Enter your prediction..."
-          className="w-full p-2 border rounded"
-          required
+          placeholder="Enter question title"
+          className="w-full p-3 border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
         />
+
         <textarea
           name="description"
           value={question.description}
           onChange={handleChange}
-          placeholder="Provide details (optional)..."
-          className="w-full p-2 border rounded"
-        />
+          placeholder="Enter question description"
+          className="w-full p-3 border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
+        ></textarea>
+
         <input
           type="date"
           name="expiration"
           value={question.expiration}
           onChange={handleChange}
-          className="w-full p-2 border rounded"
-          required
+          className="w-full p-3 border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
         />
+
         <button
           type="submit"
-          className="bg-blue-500 text-white p-2 rounded w-full"
+          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300"
         >
           Submit Question
         </button>
@@ -129,9 +142,9 @@ const Question: React.FC<QuestionProps> = ({ userAddr }) => {
           <ul className="space-y-2">
             {questions.map((q) => (
               <li key={q.id} className="p-2 border rounded">
-                <strong>{q.title}</strong> (Expires: {q.expiration})
-                <p className="text-gray-600">{q.description}</p>
-                <p className="text-gray-400">Created by: {q.creator}</p>
+                <p className="text-gray-600"><strong>{q.title}</strong> (Expires: {q.expiration}) </p>
+                <p className="text-gray-400">{q.description}</p>
+                <p className="text-gray-400">Created by: {shortenedAddress}</p>
               </li>
             ))}
           </ul>

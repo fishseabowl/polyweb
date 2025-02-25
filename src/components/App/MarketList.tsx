@@ -1,5 +1,4 @@
 // src/pages/MarketList.tsx
-import { useState } from "react";
 import MarketCard from "./MarketCard";
 
 const markets = async () => {

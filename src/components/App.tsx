@@ -10,8 +10,8 @@ const App: React.FC = () => {
   useEffect(() => {
     const fetchMarkets = async () => {
       try {
-        const response = await fetch("http://localhost:4000/api/markets");
-        if (!response.ok) throw new Error("Failed to fetch markets");
+        const response = await fetch("http://localhost:4000/api/questions");
+        if (!response.ok) throw new Error("Failed to fetch questions");
         const data = await response.json();
         setMarkets(data);
       } catch (err) {
@@ -41,15 +41,15 @@ const App: React.FC = () => {
               key={market.id}
               className="p-4 border rounded shadow-lg bg-white"
             >
-              <h3 className="text-lg font-semibold">{market.title}</h3>
-              <p className="text-gray-600">
+              <h3 className="text-lg font-semibold text-gray-600">{market.title}</h3>
+              <p className="text-gray-400">
                 {market.description || "No description provided."}
               </p>
               <p className="text-sm text-gray-500">
                 Expires on: {market.expiration}
               </p>
               <p className="text-sm text-blue-600 font-semibold">
-                Total Bet Amount: {market.totalBetAmount} ETH
+                Total Bet Amount: {market.totalBetAmount || 0} STAK
               </p>
             </li>
           ))}
