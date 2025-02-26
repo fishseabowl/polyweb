@@ -1,18 +1,19 @@
 import React, { useState, useEffect } from "react";
-import { MarketWithBets } from "./types";
+import { Market } from "./types";
 
 const App: React.FC = () => {
-  const [markets, setMarkets] = useState<MarketWithBets[]>([]);
+  const [markets, setMarkets] = useState<Market[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  // 🔹 Fetch market data from server
+  // 🔹 Fetch market questions from the server
   useEffect(() => {
     const fetchMarkets = async () => {
       try {
-        const response = await fetch("http://localhost:4000/api/questions");
-        if (!response.ok) throw new Error("Failed to fetch questions");
-        const data = await response.json();
+        const response = await fetch("http://localhost:4000/api/markets");
+        if (!response.ok) throw new Error("Failed to fetch market questions");
+
+        const data: Market[] = await response.json();
         setMarkets(data);
       } catch (err) {
         setError((err as Error).message);
@@ -26,31 +27,46 @@ const App: React.FC = () => {
 
   return (
     <div className="p-6">
-      <h2 className="text-2xl font-bold mb-4">Market Summary</h2>
+      <h2 className="text-2xl font-bold mb-4">Market Questions</h2>
 
       {loading ? (
-        <p className="text-gray-500">Loading markets...</p>
+        <p>Loading market data...</p>
       ) : error ? (
         <p className="text-red-500">{error}</p>
       ) : markets.length === 0 ? (
-        <p className="text-gray-500">No markets available.</p>
+        <p>No market questions available.</p>
       ) : (
         <ul className="space-y-4">
           {markets.map((market) => (
-            <li
-              key={market.id}
-              className="p-4 border rounded shadow-lg bg-white"
-            >
-              <h3 className="text-lg font-semibold text-gray-600">{market.title}</h3>
-              <p className="text-gray-400">
-                {market.description || "No description provided."}
+            <li key={market.id} className="p-4 border rounded shadow">
+              <h3 className="text-lg font-semibold">{market.title}</h3>
+              <p className="text-gray-600">Expires: {market.expiration}</p>
+              <p className="text-gray-500">
+                Created by: {market.creator.slice(0, 6)}...
+                {market.creator.slice(-4)}
               </p>
-              <p className="text-sm text-gray-500">
-                Expires on: {market.expiration}
+              <p className="text-green-600 font-semibold">
+                Total Bet Amount: {market.totalBetAmount} STRK
               </p>
-              <p className="text-sm text-blue-600 font-semibold">
-                Total Bet Amount: {market.totalBetAmount || 0} STAK
-              </p>
+              {/* <details>
+                <summary className="text-blue-500 cursor-pointer">
+                  View Bets ({market.bets.length})
+                </summary>
+                <ul className="mt-2 space-y-2">
+                  {market.bets.map((bet, index) => (
+                    <li key={index} className="p-2 border rounded">
+                      <p>
+                        <strong>User:</strong> {bet.user.slice(0, 6)}...
+                        {bet.user.slice(-4)}
+                      </p>
+                      <p>
+                        <strong>Bet:</strong> {bet.amount} VET on {bet.outcome}
+                      </p>
+                      <p className="text-gray-400">Date: {bet.date}</p>
+                    </li>
+                  ))}
+                </ul>
+              </details> */}
             </li>
           ))}
         </ul>

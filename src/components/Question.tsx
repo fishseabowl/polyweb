@@ -1,36 +1,59 @@
 import { useState, useEffect, useMemo } from "react";
-import { MarketWithCreator } from "./types";
+import { Market } from "./types";
 
 interface QuestionProps {
   userAddr: string; // Get username from Page.tsx
 }
 
 const Question: React.FC<QuestionProps> = ({ userAddr }) => {
-  const [question, setQuestion] = useState<MarketWithCreator>({
+  const [question, setQuestion] = useState<Market>({
     id: "",
     title: "",
     description: "",
     expiration: "",
-    creator: "",
+    creator: userAddr, // Default to user address
+    bets: [],
+    totalBetAmount: 0,
   });
 
-  const shortenedAddress = useMemo(() => {
-    if (!userAddr) return "";
-    return `${userAddr.slice(0, 6)}...${userAddr.slice(-4)}`;
-  }, [userAddr]);
-
-  const [questions, setQuestions] = useState<MarketWithCreator[]>([]); // Store submitted questions
+  const [questions, setQuestions] = useState<Market[]>([]); // Store submitted questions
 
   const fetchNextQuestionId = async (): Promise<string | null> => {
     try {
-      const response = await fetch("http://localhost:4000/api/next-question-id");
-      const data = await response.json();
+      const response = await fetch("http://localhost:4000/api/next-market-id");
+      if (!response.ok) throw new Error("Failed to fetch question ID");
+
+      const data = await response.json(); // Ensure response is JSON
+      console.log("Next Question ID:", data.nextId); // Debugging log
       return data.nextId || null;
     } catch (error) {
       console.error("Error fetching question ID:", error);
       return null;
     }
   };
+
+  // 🔹 Fetch all submitted questions
+  const fetchQuestions = async () => {
+    try {
+      const response = await fetch("http://localhost:4000/api/markets");
+      const data = await response.json();
+      if (Array.isArray(data)) {
+        setQuestions(data);
+      }
+    } catch (error) {
+      console.error("Error fetching questions:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchQuestions();
+  }, []);
+
+  // 🔹 Shorten displayed address
+  const shortenedAddress = useMemo(() => {
+    if (!userAddr) return "";
+    return `${userAddr.slice(0, 6)}...${userAddr.slice(-4)}`;
+  }, [userAddr]);
 
   // 🔹 Handle input changes
   const handleChange = (
@@ -43,50 +66,38 @@ const Question: React.FC<QuestionProps> = ({ userAddr }) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!userAddr) {
-      alert("Please connect your wallet first.");
-      return;
-    }
-
-    if (!question.title || !question.expiration) {
-      alert("Title and expiration date are required.");
-      return;
-    }
-
-    // 🔹 Retrieve next question ID before submitting
+    // Fetch next ID before submitting
     const nextId = await fetchNextQuestionId();
+    console.log("Next Question ID:", nextId); // ✅ Print the nextId for debugging
     if (!nextId) {
-      alert("Failed to retrieve question ID.");
+      alert("Failed to get next question ID");
       return;
     }
-    // 🔹 Save question to server
-    question.id = nextId;
-    question.creator = userAddr;
+
+    const newQuestion: Market = { ...question, id: nextId };
 
     try {
-      const response = await fetch("http://localhost:4000/api/save-question", {
+      const response = await fetch("http://localhost:4000/api/save-market", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(question),
+        body: JSON.stringify(newQuestion),
       });
 
       const data = await response.json();
-      console.log("Server Response:", data);
-
       if (data.success) {
-        setQuestions([...questions, question]); // Save question in UI
+        setQuestions([...questions, newQuestion]);
         setQuestion({
           id: "",
           title: "",
           description: "",
           expiration: "",
           creator: userAddr,
+          bets: [],
+          totalBetAmount: 0,
         });
         alert("Question created successfully!");
       } else {
-        alert(
-          `Failed to save question. Server says: ${data.error || "Unknown error"}`,
-        );
+        alert("Failed to save question.");
       }
     } catch (error) {
       console.error("Error saving question:", error);
@@ -94,11 +105,8 @@ const Question: React.FC<QuestionProps> = ({ userAddr }) => {
   };
 
   return (
-    <div className="max-w-lg mx-auto mt-12 p-6 bg-white shadow-lg rounded-lg border border-gray-300">
-      <h2 className="text-2xl font-bold text-gray-900 mb-4">
-        Create a New Question
-      </h2>
-
+    <div className="mt-6 p-4 bg-blue-200 rounded-lg shadow-md">
+      <h2 className="text-xl font-bold">Submit a New Question</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
         <input
           type="text"
@@ -106,34 +114,32 @@ const Question: React.FC<QuestionProps> = ({ userAddr }) => {
           value={question.title}
           onChange={handleChange}
           placeholder="Enter question title"
-          className="w-full p-3 border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
+          className="w-full p-2 border rounded bg-white"
+          required
         />
-
         <textarea
           name="description"
           value={question.description}
           onChange={handleChange}
           placeholder="Enter question description"
-          className="w-full p-3 border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
-        ></textarea>
-
+          className="w-full p-2 border rounded bg-white"
+        />
         <input
           type="date"
           name="expiration"
           value={question.expiration}
           onChange={handleChange}
-          className="w-full p-3 border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
+          className="w-full p-2 border rounded bg-white"
+          required
         />
-
         <button
           type="submit"
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300"
+          className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
         >
-          Submit Question
+          Submit
         </button>
       </form>
 
-      {/* 🔹 Display Submitted Questions */}
       <div className="mt-6">
         <h3 className="text-lg font-semibold">Submitted Questions:</h3>
         {questions.length === 0 ? (
@@ -141,10 +147,13 @@ const Question: React.FC<QuestionProps> = ({ userAddr }) => {
         ) : (
           <ul className="space-y-2">
             {questions.map((q) => (
-              <li key={q.id} className="p-2 border rounded">
-                <p className="text-gray-600"><strong>{q.title}</strong> (Expires: {q.expiration}) </p>
-                <p className="text-gray-400">{q.description}</p>
-                <p className="text-gray-400">Created by: {shortenedAddress}</p>
+              <li key={q.id} className="p-2 border rounded bg-white">
+                <strong>{q.title}</strong> (Expires: {q.expiration})
+                <p className="text-gray-600">{q.description}</p>
+                <p className="text-gray-400">
+                  Created by:{" "}
+                  {`${q.creator.slice(0, 6)}...${q.creator.slice(-4)}`}
+                </p>
               </li>
             ))}
           </ul>

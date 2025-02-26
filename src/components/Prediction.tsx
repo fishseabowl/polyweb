@@ -1,60 +1,76 @@
-import { useState } from "react";
-import MarketList from "./App/MarketList";
+import { useState, useEffect } from "react";
+import MarketCard from "./App/MarketCard";
 import BetHistory from "./App/BetHistory";
 import WinnerHistory from "./App/WinnerHistory";
-
-interface Bet {
-  id: string;
-  outcome: string;
-  amount: number;
-  name: string;
-}
+import { Market, Bet } from "./types";
 
 const Prediction = () => {
-  const [account, setAccount] = useState<string | null>(null); // Default to null if no login
+  const [account, setAccount] = useState<string | null>(null);
+  const [markets, setMarkets] = useState<Market[]>([]);
+  const [selectedMarket, setSelectedMarket] = useState<Market | null>(null);
   const [bets, setBets] = useState<Bet[]>([]);
 
-  // State to store credentials
-  const [storedUsername, setStoredUsername] = useState<string | null>(null);
-  const [storedPassword, setStoredPassword] = useState<string | null>(null);
-  const [isSettingUp, setIsSettingUp] = useState(false); // Controls account setup
+  // Fetch available markets
+  useEffect(() => {
+    const fetchMarkets = async () => {
+      try {
+        const response = await fetch("http://localhost:4000/api/markets");
+        if (!response.ok) throw new Error("Failed to fetch markets");
+        const data = await response.json();
+        setMarkets(data);
+      } catch (error) {
+        console.error("Error fetching markets:", error);
+      }
+    };
+
+    fetchMarkets();
+  }, []);
 
   // Handle placing a bet
-  const handleBet = (
-    id: string,
-    name: string,
-    outcome: string,
-    amount: number,
-  ) => {
-    setBets([...bets, { id, name, outcome, amount }]);
-  };
-
-  // Handle navigation to the setup page
-  const handleGoToSetup = () => {
-    setIsSettingUp(true);
+  const handleBet = (marketId: string, outcome: string, amount: number) => {
+    const newBet: Bet = {
+      marketId,
+      user: account || "Guest",
+      amount,
+      outcome,
+      date: new Date().toISOString(),
+    };
+    setBets([...bets, newBet]);
   };
 
   return (
-    <div className="App">
-      <div className="flex flex-row gap-8">
-        {/* MarketList on the left */}
-        <div className="flex-1">
-          <MarketList onBet={handleBet} />
-        </div>
+    <div className="p-6">
+      <h2 className="text-2xl font-bold mb-4">Market Predictions</h2>
 
-        {/* BetHistory and winners on the right */}
-        <div className="flex-1 flex flex-col gap-4">
-          {/* BetHistory at the top */}
-          <div>
-            <BetHistory bets={bets} />
-          </div>
-
-          {/* WinnerHistory below BetHistory */}
-          <div>
-            <WinnerHistory bets={bets} />
-          </div>
+      {/* Show available markets */}
+      {markets.length === 0 ? (
+        <p className="text-gray-500">No market predictions available.</p>
+      ) : (
+        <div>
+          {markets.map((market) => (
+            <button
+              key={market.id}
+              className="block p-2 border rounded mb-2"
+              onClick={() => setSelectedMarket(market)}
+            >
+              {market.title}
+            </button>
+          ))}
         </div>
-      </div>
+      )}
+
+      {/* Show selected market */}
+      {selectedMarket && (
+        <MarketCard
+          market={selectedMarket}
+          username={account || ""}
+          onBet={handleBet}
+        />
+      )}
+
+      {/* Bet and Winner History */}
+      <BetHistory bets={bets} markets={markets} />
+      <WinnerHistory bets={bets} markets={markets} />
     </div>
   );
 };

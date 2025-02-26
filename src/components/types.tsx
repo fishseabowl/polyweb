@@ -1,17 +1,25 @@
-export interface MarketCardProps {
-  id: string;
+// ✅ Market (Question) Structure
+export interface Market {
+  id: string; // Unique Market ID (same as question ID)
   title: string;
   description?: string;
   expiration: string;
+  creator: string; // User ID of the creator
+  bets: Bet[]; // Associated bets
+  totalBetAmount: number; // Sum of all bet amounts
 }
 
-// ✅ Component 1: Market with Betting Information
-export interface MarketWithBets extends MarketCardProps {
-  bets: { user: string; amount: number; outcome: string }[]; // List of bets
-  totalBetAmount: number; // Computed field
+// ✅ Bet Structure
+export interface Bet {
+  marketId: string; // Tied to a specific market/question
+  user: string; // User who placed the bet
+  amount: number; // Bet amount
+  outcome: string; // Outcome chosen by the user
+  date: string; // Timestamp when bet was placed
 }
 
-// ✅ Component 2: New Market Card with Creator Information
-export interface MarketWithCreator extends MarketCardProps {
-  creator: string; // Name of the market creator
+// ✅ User Bet History (optional, for frontend filtering)
+export interface UserBetHistory {
+  userId: string;
+  bets: Bet[];
 }
