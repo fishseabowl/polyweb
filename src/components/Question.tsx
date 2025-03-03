@@ -106,7 +106,7 @@ const Question: React.FC<QuestionProps> = ({ userAddr }) => {
 
   return (
     <div className="mt-6 p-4 bg-blue-200 rounded-lg shadow-md">
-      <h2 className="text-xl font-bold">Submit a New Question</h2>
+      <h2 className="text-xl font-bold text-fuchsia-600 bg-white">Submit a New Question</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
         <input
           type="text"
@@ -114,7 +114,7 @@ const Question: React.FC<QuestionProps> = ({ userAddr }) => {
           value={question.title}
           onChange={handleChange}
           placeholder="Enter question title"
-          className="w-full p-2 border rounded bg-white"
+          className="w-full p-2 border rounded text-gray-700 bg-white"
           required
         />
         <textarea
@@ -122,14 +122,14 @@ const Question: React.FC<QuestionProps> = ({ userAddr }) => {
           value={question.description}
           onChange={handleChange}
           placeholder="Enter question description"
-          className="w-full p-2 border rounded bg-white"
+          className="w-full p-2 border rounded  text-gray-700 bg-white"
         />
         <input
           type="date"
           name="expiration"
           value={question.expiration}
           onChange={handleChange}
-          className="w-full p-2 border rounded bg-white"
+          className="w-full p-2 border rounded  text-gray-700 bg-white"
           required
         />
         <button

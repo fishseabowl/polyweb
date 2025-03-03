@@ -30,11 +30,11 @@ const MarketCard: React.FC<MarketCardProps> = ({ market, username, onBet }) => {
 
       {/* Outcome Selection */}
       <div className="mt-4">
-        <label className="block text-sm font-medium">Choose Outcome:</label>
+        <label className="block text-sm font-medium text-gray-100">Choose Outcome:</label>
         <select
           value={selectedOutcome}
           onChange={(e) => setSelectedOutcome(e.target.value)}
-          className="border p-2 w-full"
+          className="border p-2 w-full text-black bg-white"
         >
           <option value="">Select an outcome</option>
           <option value="YES">Yes</option>
@@ -48,8 +48,11 @@ const MarketCard: React.FC<MarketCardProps> = ({ market, username, onBet }) => {
         <input
           type="number"
           value={amount}
-          onChange={(e) => setAmount(parseFloat(e.target.value))}
-          className="border p-2 w-full"
+          onChange={(e) => {
+            const newValue = parseFloat(e.target.value);
+            setAmount(newValue >= 0 ? newValue : 0); // Ensure non-negative values
+          }}
+          className="border p-2 w-full text-blue-600 bg-white"
           min="0"
         />
       </div>

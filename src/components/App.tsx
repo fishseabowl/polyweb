@@ -46,7 +46,7 @@ const App: React.FC = () => {
                 {market.creator.slice(-4)}
               </p>
               <p className="text-green-600 font-semibold">
-                Total Bet Amount: {market.totalBetAmount} STRK
+                Total Bet Amount: {market.totalBetAmount|| 0} STRK
               </p>
               {/* <details>
                 <summary className="text-blue-500 cursor-pointer">
