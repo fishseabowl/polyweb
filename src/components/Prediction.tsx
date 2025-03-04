@@ -4,8 +4,11 @@ import BetHistory from "./App/BetHistory";
 import WinnerHistory from "./App/WinnerHistory";
 import { Market, Bet } from "./types";
 
-const Prediction = () => {
-  const [account, setAccount] = useState<string | null>(null);
+interface PredictionProps {
+  userAddr: string; // Get username from Page.tsx
+}
+
+const Prediction : React.FC<PredictionProps> = ({ userAddr }) =>  {
   const [markets, setMarkets] = useState<Market[]>([]);
   const [selectedMarket, setSelectedMarket] = useState<Market | null>(null);
   const [bets, setBets] = useState<Bet[]>([]);
@@ -30,7 +33,7 @@ const Prediction = () => {
   const handleBet = (marketId: string, outcome: string, amount: number) => {
     const newBet: Bet = {
       marketId,
-      user: account || "Guest",
+      user: userAddr,
       amount,
       outcome,
       date: new Date().toISOString(),
@@ -63,7 +66,7 @@ const Prediction = () => {
       {selectedMarket && (
         <MarketCard
           market={selectedMarket}
-          username={account || ""}
+          username={userAddr}
           onBet={handleBet}
         />
       )}

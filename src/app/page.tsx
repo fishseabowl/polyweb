@@ -67,7 +67,7 @@ const Page: React.FC = () => {
 
             {selectedPage === "prediction" &&
               (!balanceIsLoading && !balanceIsError && balanceData ? (
-                <Prediction />
+                <Prediction userAddr={userAddress || ""}/>
               ) : (
                 <p className="text-red-500 text-lg">
                   Please connect your wallet first.
