@@ -46,27 +46,8 @@ const App: React.FC = () => {
                 {market.creator.slice(-4)}
               </p>
               <p className="text-green-600 font-semibold">
-                Total Bet Amount: {market.totalBetAmount|| 0} STRK
+                Total Bet Amount: {market.totalAmount|| 0} STRK
               </p>
-              {/* <details>
-                <summary className="text-blue-500 cursor-pointer">
-                  View Bets ({market.bets.length})
-                </summary>
-                <ul className="mt-2 space-y-2">
-                  {market.bets.map((bet, index) => (
-                    <li key={index} className="p-2 border rounded">
-                      <p>
-                        <strong>User:</strong> {bet.user.slice(0, 6)}...
-                        {bet.user.slice(-4)}
-                      </p>
-                      <p>
-                        <strong>Bet:</strong> {bet.amount} VET on {bet.outcome}
-                      </p>
-                      <p className="text-gray-400">Date: {bet.date}</p>
-                    </li>
-                  ))}
-                </ul>
-              </details> */}
             </li>
           ))}
         </ul>

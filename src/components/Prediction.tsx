@@ -12,6 +12,7 @@ const Prediction : React.FC<PredictionProps> = ({ userAddr }) =>  {
   const [markets, setMarkets] = useState<Market[]>([]);
   const [selectedMarket, setSelectedMarket] = useState<Market | null>(null);
   const [bets, setBets] = useState<Bet[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
 
   // Fetch available markets
   useEffect(() => {
@@ -30,15 +31,58 @@ const Prediction : React.FC<PredictionProps> = ({ userAddr }) =>  {
   }, []);
 
   // Handle placing a bet
-  const handleBet = (marketId: string, outcome: string, amount: number) => {
-    const newBet: Bet = {
-      marketId,
-      user: userAddr,
-      amount,
-      outcome,
-      date: new Date().toISOString(),
-    };
-    setBets([...bets, newBet]);
+  const handleBet = async (marketId: string, outcome: string, amount: number) => {
+    setLoading(true);
+
+    try {
+      const response = await fetch("http://localhost:4000/api/save-bet", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId: userAddr,
+          marketId,
+          amount,
+          outcome,
+          date: new Date().toISOString(),
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to place bet.");
+      }
+
+      alert("Bet placed successfully!");
+
+      const newBet: Bet = {
+        marketId,
+        user: userAddr,
+        amount,
+        outcome,
+        date: new Date().toISOString(),
+      };
+
+      setBets((prevBets) => [...prevBets, newBet]);
+
+      // Update the totalAmount in markets
+      setMarkets((prevMarkets) =>
+        prevMarkets.map((market) =>
+          market.id === marketId
+            ? { ...market, totalAmount: (market.totalAmount || 0) + amount }
+            : market
+        )
+      );
+    } catch (error) {
+      console.error("Error placing bet:", error);
+      if (error instanceof Error) {
+        alert(error.message);
+      } else {
+        alert("An unknown error occurred.");
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
