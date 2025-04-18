@@ -29,6 +29,26 @@ const Prediction : React.FC<PredictionProps> = ({ userAddr }) =>  {
 
     fetchMarkets();
   }, []);
+  
+  // Fetch existing bets for the user
+  useEffect(() => {
+    const fetchUserBets = async () => {
+      try {
+        const response = await fetch(`http://localhost:4000/api/user-bets/${userAddr}`);
+        if (!response.ok) throw new Error("Failed to fetch user bets");
+        const data = await response.json();
+        if (data.success) {
+          setBets(data.bets);
+        }
+      } catch (error) {
+        console.error("Error fetching user bets:", error);
+      }
+    };
+
+    if (userAddr) {
+      fetchUserBets();
+    }
+  }, [userAddr]);
 
   // Handle placing a bet
   const handleBet = async (marketId: string, outcome: string, amount: number) => {

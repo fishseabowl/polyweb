@@ -13,7 +13,7 @@ const Question: React.FC<QuestionProps> = ({ userAddr }) => {
     expiration: "",
     creator: userAddr, // Default to user address
     bets: [],
-    totalBetAmount: 0,
+    totalAmount: 0,
   });
 
   const [questions, setQuestions] = useState<Market[]>([]); // Store submitted questions
@@ -93,7 +93,7 @@ const Question: React.FC<QuestionProps> = ({ userAddr }) => {
           expiration: "",
           creator: userAddr,
           bets: [],
-          totalBetAmount: 0,
+          totalAmount: 0,
         });
         alert("Question created successfully!");
       } else {

@@ -5,6 +5,7 @@ export interface Market {
   description?: string;
   expiration: string;
   creator: string; // User ID of the creator
+  bets: Bet[]; // Associated bets
   totalAmount: number; // Sum of all bet amounts
 }
 
