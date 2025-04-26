@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
+import abi from "./polycoin_abi.json";
 import MarketCard from "./App/MarketCard";
 import BetHistory from "./App/BetHistory";
 import WinnerHistory from "./App/WinnerHistory";
+import { useAccount, useContract, useNetwork} from "@starknet-react/core";
 import { Market, Bet } from "./types";
 
 interface PredictionProps {
@@ -13,6 +15,7 @@ const Prediction : React.FC<PredictionProps> = ({ userAddr }) =>  {
   const [selectedMarket, setSelectedMarket] = useState<Market | null>(null);
   const [bets, setBets] = useState<Bet[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
+  const { address } = useAccount();
 
   // Fetch available markets
   useEffect(() => {
