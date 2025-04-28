@@ -1,4 +1,4 @@
-[
+export const polycoinAbi = [
   {
     "type": "impl",
     "name": "Polycoin",

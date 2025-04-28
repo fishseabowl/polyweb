@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
-import abi from "./polycoin_abi.json";
+import { RpcProvider } from 'starknet';
+//import {polycoinAbi} from "./polycoin_abi";
 import MarketCard from "./App/MarketCard";
 import BetHistory from "./App/BetHistory";
 import WinnerHistory from "./App/WinnerHistory";
-import { useAccount, useContract, useNetwork} from "@starknet-react/core";
+import {  useContract} from "@starknet-react/core";
 import { Market, Bet } from "./types";
 
 interface PredictionProps {
@@ -15,7 +16,35 @@ const Prediction : React.FC<PredictionProps> = ({ userAddr }) =>  {
   const [selectedMarket, setSelectedMarket] = useState<Market | null>(null);
   const [bets, setBets] = useState<Bet[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  const { address } = useAccount();
+  const [testAbi, setTestAbi] = useState<any | undefined>(undefined);
+
+  const contractAddress = "0x00e1dd7b59ee3adb432e3704ef925cf096ce5b64507abc1f486308abaf79e585";
+  const provider= new RpcProvider();
+
+  useEffect(() => {
+    const fetchAbi = async () => {
+      try {
+        const { abi } = await provider.getClassAt(contractAddress);
+        if (!abi) {
+          throw new Error("no abi.");
+        }
+        setTestAbi(abi); // save the ABI to state
+      } catch (err) {
+        console.error("Failed to fetch ABI", err);
+      }
+    };
+
+    fetchAbi();
+  }, [contractAddress]);
+
+  if (!testAbi) {
+    return <div>Loading ABI...</div>;
+  }
+
+  const { contract } = useContract({
+    abi: testAbi,
+    address: contractAddress,
+  });
 
   // Fetch available markets
   useEffect(() => {
