@@ -1,25 +1,26 @@
 import { useState, useEffect } from "react";
-import { RpcProvider } from 'starknet';
+import { Abi, RpcProvider } from "starknet";
 //import {polycoinAbi} from "./polycoin_abi";
 import MarketCard from "./App/MarketCard";
 import BetHistory from "./App/BetHistory";
 import WinnerHistory from "./App/WinnerHistory";
-import {  useContract} from "@starknet-react/core";
+import { useContract } from "@starknet-react/core";
 import { Market, Bet } from "./types";
 
 interface PredictionProps {
   userAddr: string; // Get username from Page.tsx
 }
 
-const Prediction : React.FC<PredictionProps> = ({ userAddr }) =>  {
+const Prediction: React.FC<PredictionProps> = ({ userAddr }) => {
   const [markets, setMarkets] = useState<Market[]>([]);
   const [selectedMarket, setSelectedMarket] = useState<Market | null>(null);
   const [bets, setBets] = useState<Bet[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  const [testAbi, setTestAbi] = useState<any | undefined>(undefined);
+  const [testAbi, setTestAbi] = useState<Abi | undefined>(undefined);
 
-  const contractAddress = "0x00e1dd7b59ee3adb432e3704ef925cf096ce5b64507abc1f486308abaf79e585";
-  const provider= new RpcProvider();
+  const contractAddress =
+    "0x00e1dd7b59ee3adb432e3704ef925cf096ce5b64507abc1f486308abaf79e585";
+  const provider = new RpcProvider();
 
   useEffect(() => {
     const fetchAbi = async () => {
@@ -37,12 +38,8 @@ const Prediction : React.FC<PredictionProps> = ({ userAddr }) =>  {
     fetchAbi();
   }, [contractAddress]);
 
-  if (!testAbi) {
-    return <div>Loading ABI...</div>;
-  }
-
   const { contract } = useContract({
-    abi: testAbi,
+    abi: testAbi ?? [],
     address: contractAddress,
   });
 
@@ -61,12 +58,14 @@ const Prediction : React.FC<PredictionProps> = ({ userAddr }) =>  {
 
     fetchMarkets();
   }, []);
-  
+
   // Fetch existing bets for the user
   useEffect(() => {
     const fetchUserBets = async () => {
       try {
-        const response = await fetch(`http://localhost:4000/api/user-bets/${userAddr}`);
+        const response = await fetch(
+          `http://localhost:4000/api/user-bets/${userAddr}`,
+        );
         if (!response.ok) throw new Error("Failed to fetch user bets");
         const data = await response.json();
         if (data.success) {
@@ -83,7 +82,11 @@ const Prediction : React.FC<PredictionProps> = ({ userAddr }) =>  {
   }, [userAddr]);
 
   // Handle placing a bet
-  const handleBet = async (marketId: string, outcome: string, amount: number) => {
+  const handleBet = async (
+    marketId: string,
+    outcome: string,
+    amount: number,
+  ) => {
     setLoading(true);
 
     try {
@@ -122,8 +125,8 @@ const Prediction : React.FC<PredictionProps> = ({ userAddr }) =>  {
         prevMarkets.map((market) =>
           market.id === marketId
             ? { ...market, totalAmount: (market.totalAmount || 0) + amount }
-            : market
-        )
+            : market,
+        ),
       );
     } catch (error) {
       console.error("Error placing bet:", error);
@@ -159,13 +162,16 @@ const Prediction : React.FC<PredictionProps> = ({ userAddr }) =>  {
       )}
 
       {/* Show selected market */}
+
       {selectedMarket && (
         <MarketCard
           market={selectedMarket}
-          username={userAddr}
+          //username={userAddr}
           onBet={handleBet}
         />
       )}
+
+      {loading && <p>Placing your bet, please wait...</p>}
 
       {/* Bet and Winner History */}
       <BetHistory bets={bets} markets={markets} />

@@ -3,11 +3,11 @@ import { Market } from "../types";
 
 interface MarketCardProps {
   market: Market;
-  username: string;
+  //username: string;
   onBet: (marketId: string, outcome: string, amount: number) => void;
 }
 
-const MarketCard: React.FC<MarketCardProps> = ({ market, username, onBet }) => {
+const MarketCard: React.FC<MarketCardProps> = ({ market, onBet }) => {
   const [amount, setAmount] = useState<number>(0);
   const [selectedOutcome, setSelectedOutcome] = useState<string>("");
 
@@ -30,7 +30,9 @@ const MarketCard: React.FC<MarketCardProps> = ({ market, username, onBet }) => {
 
       {/* Outcome Selection */}
       <div className="mt-4">
-        <label className="block text-sm font-medium text-gray-100">Choose Outcome:</label>
+        <label className="block text-sm font-medium text-gray-100">
+          Choose Outcome:
+        </label>
         <select
           value={selectedOutcome}
           onChange={(e) => setSelectedOutcome(e.target.value)}

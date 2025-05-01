@@ -1,5 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { Market } from "./types";
+import { Abi, RpcProvider } from "starknet";
+import { useContract } from "@starknet-react/core";
 
 interface QuestionProps {
   userAddr: string; // Get username from Page.tsx
@@ -17,6 +19,31 @@ const Question: React.FC<QuestionProps> = ({ userAddr }) => {
   });
 
   const [questions, setQuestions] = useState<Market[]>([]); // Store submitted questions
+  const contractAddress =
+    "0x00e1dd7b59ee3adb432e3704ef925cf096ce5b64507abc1f486308abaf79e585";
+  const provider = new RpcProvider();
+  const [testAbi, setTestAbi] = useState<Abi | undefined>(undefined);
+
+  useEffect(() => {
+    const fetchAbi = async () => {
+      try {
+        const { abi } = await provider.getClassAt(contractAddress);
+        if (!abi) {
+          throw new Error("no abi.");
+        }
+        setTestAbi(abi); // save the ABI to state
+      } catch (err) {
+        console.error("Failed to fetch ABI", err);
+      }
+    };
+
+    fetchAbi();
+  }, [contractAddress]);
+
+  const { contract } = useContract({
+    abi: testAbi ?? [],
+    address: contractAddress,
+  });
 
   const fetchNextQuestionId = async (): Promise<string | null> => {
     try {
@@ -50,10 +77,10 @@ const Question: React.FC<QuestionProps> = ({ userAddr }) => {
   }, []);
 
   // 🔹 Shorten displayed address
-  const shortenedAddress = useMemo(() => {
-    if (!userAddr) return "";
-    return `${userAddr.slice(0, 6)}...${userAddr.slice(-4)}`;
-  }, [userAddr]);
+  //  const shortenedAddress = useMemo(() => {
+  //    if (!userAddr) return "";
+  //    return `${userAddr.slice(0, 6)}...${userAddr.slice(-4)}`;
+  //  }, [userAddr]);
 
   // 🔹 Handle input changes
   const handleChange = (
@@ -102,11 +129,15 @@ const Question: React.FC<QuestionProps> = ({ userAddr }) => {
     } catch (error) {
       console.error("Error saving question:", error);
     }
+
+    contract.call
   };
 
   return (
     <div className="mt-6 p-4 bg-blue-200 rounded-lg shadow-md">
-      <h2 className="text-xl font-bold text-fuchsia-600 bg-white">Submit a New Question</h2>
+      <h2 className="text-xl font-bold text-fuchsia-600 bg-white">
+        Submit a New Question
+      </h2>
       <form onSubmit={handleSubmit} className="space-y-4">
         <input
           type="text"
