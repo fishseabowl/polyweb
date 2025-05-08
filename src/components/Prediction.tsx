@@ -42,7 +42,7 @@ const Prediction: React.FC<PredictionProps> = ({ userAddr }) => {
     abi: testAbi ?? [],
     address: contractAddress,
   });
-
+  console.log(typeof contract);
   // Fetch available markets
   useEffect(() => {
     const fetchMarkets = async () => {

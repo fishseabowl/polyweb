@@ -1,7 +1,7 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { Market } from "./types";
 import { Abi, RpcProvider } from "starknet";
-import { useContract } from "@starknet-react/core";
+import { useAccount, useContract } from "@starknet-react/core";
 
 interface QuestionProps {
   userAddr: string; // Get username from Page.tsx
@@ -44,6 +44,9 @@ const Question: React.FC<QuestionProps> = ({ userAddr }) => {
     abi: testAbi ?? [],
     address: contractAddress,
   });
+  console.log(typeof contract);
+  const { account } = useAccount();
+  console.log("Account:", account); // Debugging log
 
   const fetchNextQuestionId = async (): Promise<string | null> => {
     try {
@@ -129,10 +132,26 @@ const Question: React.FC<QuestionProps> = ({ userAddr }) => {
     } catch (error) {
       console.error("Error saving question:", error);
     }
+    /* const timestamp: bigint = BigInt(Date.now());
+    const expirationTimestamp: bigint = BigInt(
+      new Date(question.expiration).getTime(),
+    );
+    if (expirationTimestamp <= timestamp) {
+      alert("Expiration date must be in the future.");
+      return;
+    }
+    
+    const callData = contract.populate("create_question", [userAddr, question.title, expirationTimestamp, timestamp]);
+    if (!account) {
+      alert("Account is not connected.");
+      return;
+    }
+    const { transaction_hash } = await account.execute([callData]);
+    console.log("Transaction hash:", transaction_hash);
+    alert("Transaction sent successfully!"); */
 
-    contract.call
   };
-
+  
   return (
     <div className="mt-6 p-4 bg-blue-200 rounded-lg shadow-md">
       <h2 className="text-xl font-bold text-fuchsia-600 bg-white">
