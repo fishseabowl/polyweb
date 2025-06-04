@@ -1,6 +1,7 @@
+"use client";
 import { useState, useEffect } from "react";
 import { Market } from "./types";
-import { Abi, RpcProvider } from "starknet";
+import { Abi, RpcProvider, logger } from "starknet";
 import { useAccount, useContract } from "@starknet-react/core";
 
 interface QuestionProps {
@@ -18,12 +19,17 @@ const Question: React.FC<QuestionProps> = ({ userAddr }) => {
     totalAmount: 0,
   });
 
+  logger.setLogLevel('DEBUG'); // Set log level to DEBUG
+
   const [questions, setQuestions] = useState<Market[]>([]); // Store submitted questions
   const contractAddress =
     "0x00e1dd7b59ee3adb432e3704ef925cf096ce5b64507abc1f486308abaf79e585";
-  const provider = new RpcProvider();
+  const provider  = new RpcProvider({
+    nodeUrl: 'https://starknet-sepolia.public.blastapi.io/rpc/v0_8',
+  });
   const [testAbi, setTestAbi] = useState<Abi | undefined>(undefined);
-
+  const resp = provider.getSpecVersion();
+  console.log("Response:", resp); // Debugging log
   useEffect(() => {
     const fetchAbi = async () => {
       try {

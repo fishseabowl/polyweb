@@ -1,20 +1,20 @@
 "use client";
 import { useAccount, useConnect, useDisconnect } from "@starknet-react/core";
-import { useMemo } from "react";
+//import { useMemo } from "react";
 import { Button } from "./ui/Button";
 
 function WalletConnected() {
   const { address } = useAccount();
   const { disconnect } = useDisconnect();
 
-  const shortenedAddress = useMemo(() => {
+/*   const shortenedAddress = useMemo(() => {
     if (!address) return "";
     return `${address.slice(0, 6)}...${address.slice(-4)}`;
-  }, [address]);
+  }, [address]); */
 
   return (
     <div>
-      <span>Connected: {shortenedAddress}</span>
+      <span>Connected: {address}</span>
       <button
         className="bg-yellow-300 border border-black hover:bg-yellow-500 text-black font-regular py-2 px-4"
         onClick={() => disconnect()}
