@@ -47,7 +47,7 @@ const Question: React.FC<QuestionProps> = ({ userAddr }) => {
   }, [contractAddress]);
 
   const { contract } = useContract({
-    abi: testAbi ?? [],
+    abi: testAbi,
     address: contractAddress,
   });
   console.log(typeof contract);
