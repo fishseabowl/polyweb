@@ -1,8 +1,9 @@
 "use client";
 import { useState, useEffect } from "react";
 import { Market } from "./types";
-import { Abi, RpcProvider, logger } from "starknet";
+import { Contract, RpcProvider, logger } from "starknet";
 import { useAccount, useContract } from "@starknet-react/core";
+import { polycoinAbi } from "./polycoin_abi";
 
 interface QuestionProps {
   userAddr: string; // Get username from Page.tsx
@@ -27,29 +28,11 @@ const Question: React.FC<QuestionProps> = ({ userAddr }) => {
   const provider  = new RpcProvider({
     nodeUrl: 'https://starknet-sepolia.public.blastapi.io/rpc/v0_8',
   });
-  const [testAbi, setTestAbi] = useState<Abi | undefined>(undefined);
-  const resp = provider.getSpecVersion();
-  console.log("Response:", resp); // Debugging log
-  useEffect(() => {
-    const fetchAbi = async () => {
-      try {
-        const { abi } = await provider.getClassAt(contractAddress);
-        if (!abi) {
-          throw new Error("no abi.");
-        }
-        setTestAbi(abi); // save the ABI to state
-      } catch (err) {
-        console.error("Failed to fetch ABI", err);
-      }
-    };
+  
+  const abi = polycoinAbi;
 
-    fetchAbi();
-  }, [contractAddress]);
-
-  const { contract } = useContract({
-    abi: testAbi,
-    address: contractAddress,
-  });
+  const contract = new Contract(abi, contractAddress, provider);
+  
   console.log(typeof contract);
   const { account } = useAccount();
   console.log("Account:", account); // Debugging log

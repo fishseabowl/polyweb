@@ -1,10 +1,9 @@
 import { useState, useEffect } from "react";
-import { Abi, RpcProvider } from "starknet";
-//import {polycoinAbi} from "./polycoin_abi";
+import { RpcProvider, Contract } from "starknet";
+import { polycoinAbi } from "./polycoin_abi";
 import MarketCard from "./App/MarketCard";
 import BetHistory from "./App/BetHistory";
 import WinnerHistory from "./App/WinnerHistory";
-import { useContract } from "@starknet-react/core";
 import { Market, Bet } from "./types";
 
 interface PredictionProps {
@@ -16,32 +15,16 @@ const Prediction: React.FC<PredictionProps> = ({ userAddr }) => {
   const [selectedMarket, setSelectedMarket] = useState<Market | null>(null);
   const [bets, setBets] = useState<Bet[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  const [testAbi, setTestAbi] = useState<Abi | undefined>(undefined);
 
   const contractAddress =
     "0x00e1dd7b59ee3adb432e3704ef925cf096ce5b64507abc1f486308abaf79e585";
-  const provider = new RpcProvider();
-
-  useEffect(() => {
-    const fetchAbi = async () => {
-      try {
-        const { abi } = await provider.getClassAt(contractAddress);
-        if (!abi) {
-          throw new Error("no abi.");
-        }
-        setTestAbi(abi); // save the ABI to state
-      } catch (err) {
-        console.error("Failed to fetch ABI", err);
-      }
-    };
-
-    fetchAbi();
-  }, [contractAddress]);
-
-  const { contract } = useContract({
-    abi: testAbi ?? [],
-    address: contractAddress,
+    const provider  = new RpcProvider({
+    nodeUrl: 'https://starknet-sepolia.public.blastapi.io/rpc/v0_8',
   });
+  
+  const abi = polycoinAbi;
+
+  const contract = new Contract(abi, contractAddress, provider);
   console.log(typeof contract);
   // Fetch available markets
   useEffect(() => {
