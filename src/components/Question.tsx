@@ -1,9 +1,10 @@
 "use client";
 import { useState, useEffect } from "react";
 import { Market } from "./types";
-import { Contract, RpcProvider, logger } from "starknet";
-import { useAccount, useContract } from "@starknet-react/core";
+import { Contract, RpcProvider } from "starknet";
+import { useAccount } from "@starknet-react/core";
 import { polycoinAbi } from "./polycoin_abi";
+import { getLow128BitsOfSHA256 } from "../utils/hash";
 
 interface QuestionProps {
   userAddr: string; // Get username from Page.tsx
@@ -20,19 +21,17 @@ const Question: React.FC<QuestionProps> = ({ userAddr }) => {
     totalAmount: 0,
   });
 
-  logger.setLogLevel('DEBUG'); // Set log level to DEBUG
-
   const [questions, setQuestions] = useState<Market[]>([]); // Store submitted questions
   const contractAddress =
     "0x00e1dd7b59ee3adb432e3704ef925cf096ce5b64507abc1f486308abaf79e585";
-  const provider  = new RpcProvider({
-    nodeUrl: 'https://starknet-sepolia.public.blastapi.io/rpc/v0_8',
+  const provider = new RpcProvider({
+    nodeUrl: "https://starknet-sepolia.public.blastapi.io/rpc/v0_8",
   });
-  
+
   const abi = polycoinAbi;
 
   const contract = new Contract(abi, contractAddress, provider);
-  
+
   console.log(typeof contract);
   const { account } = useAccount();
   console.log("Account:", account); // Debugging log
@@ -121,7 +120,13 @@ const Question: React.FC<QuestionProps> = ({ userAddr }) => {
     } catch (error) {
       console.error("Error saving question:", error);
     }
-    /* const timestamp: bigint = BigInt(Date.now());
+    if (account) {
+      contract.connect(account);
+    } else {
+      alert("Please connect your account first.");
+      return;
+    }
+    const timestamp: bigint = BigInt(Date.now());
     const expirationTimestamp: bigint = BigInt(
       new Date(question.expiration).getTime(),
     );
@@ -129,18 +134,26 @@ const Question: React.FC<QuestionProps> = ({ userAddr }) => {
       alert("Expiration date must be in the future.");
       return;
     }
-    
-    const callData = contract.populate("create_question", [userAddr, question.title, expirationTimestamp, timestamp]);
-    if (!account) {
-      alert("Account is not connected.");
+    if (!userAddr) {
+      alert("User address is not available.");
       return;
     }
-    const { transaction_hash } = await account.execute([callData]);
-    console.log("Transaction hash:", transaction_hash);
-    alert("Transaction sent successfully!"); */
 
+    const titleHash = await getLow128BitsOfSHA256(question.title);
+   
+    const myCall = contract.populate("create_question", [
+      titleHash,
+      expirationTimestamp,
+      timestamp,
+      userAddr,
+    ]);
+
+    const res = await contract.create_question(myCall.calldata);
+    alert("Create question successfully!");
+    await provider.waitForTransaction(res.transaction_hash);
+    alert("Transaction sent successfully!");
   };
-  
+
   return (
     <div className="mt-6 p-4 bg-blue-200 rounded-lg shadow-md">
       <h2 className="text-xl font-bold text-fuchsia-600 bg-white">

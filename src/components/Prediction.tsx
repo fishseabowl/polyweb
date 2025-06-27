@@ -18,10 +18,10 @@ const Prediction: React.FC<PredictionProps> = ({ userAddr }) => {
 
   const contractAddress =
     "0x00e1dd7b59ee3adb432e3704ef925cf096ce5b64507abc1f486308abaf79e585";
-    const provider  = new RpcProvider({
-    nodeUrl: 'https://starknet-sepolia.public.blastapi.io/rpc/v0_8',
+  const provider = new RpcProvider({
+    nodeUrl: "https://starknet-sepolia.public.blastapi.io/rpc/v0_8",
   });
-  
+
   const abi = polycoinAbi;
 
   const contract = new Contract(abi, contractAddress, provider);
