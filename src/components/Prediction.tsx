@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { RpcProvider, Contract } from "starknet";
+import { RpcProvider, Contract, AccountInterface } from "starknet";
 import { polycoinAbi } from "./polycoin_abi";
 import MarketCard from "./App/MarketCard";
 import BetHistory from "./App/BetHistory";
@@ -8,16 +8,18 @@ import { Market, Bet } from "./types";
 
 interface PredictionProps {
   userAddr: string; // Get username from Page.tsx
+  userAccount: AccountInterface | null;
 }
 
-const Prediction: React.FC<PredictionProps> = ({ userAddr }) => {
+const Prediction: React.FC<PredictionProps> = ({ userAddr, userAccount }) => {
   const [markets, setMarkets] = useState<Market[]>([]);
   const [selectedMarket, setSelectedMarket] = useState<Market | null>(null);
   const [bets, setBets] = useState<Bet[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
   const contractAddress =
-    "0x00e1dd7b59ee3adb432e3704ef925cf096ce5b64507abc1f486308abaf79e585";
+    "0x014d6c3664f25b6d4cae0a144d769a69920f731b8cb8e8ff45f2e3870a4deddd";   // Poloycoin without owner constraint
+  //  "0x00e1dd7b59ee3adb432e3704ef925cf096ce5b64507abc1f486308abaf79e585"; // Polycoin
   const provider = new RpcProvider({
     nodeUrl: "https://starknet-sepolia.public.blastapi.io/rpc/v0_8",
   });

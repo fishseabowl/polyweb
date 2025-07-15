@@ -1,16 +1,17 @@
 "use client";
 import { useState, useEffect } from "react";
 import { Market } from "./types";
-import { Contract, RpcProvider } from "starknet";
+import { AccountInterface, Contract, RpcProvider } from "starknet";
 import { useAccount } from "@starknet-react/core";
 import { polycoinAbi } from "./polycoin_abi";
 import { getLow128BitsOfSHA256 } from "../utils/hash";
 
 interface QuestionProps {
   userAddr: string; // Get username from Page.tsx
+  userAccount: AccountInterface | null;
 }
 
-const Question: React.FC<QuestionProps> = ({ userAddr }) => {
+const Question: React.FC<QuestionProps> = ({ userAddr, userAccount }) => {
   const [question, setQuestion] = useState<Market>({
     id: "",
     title: "",
@@ -23,7 +24,8 @@ const Question: React.FC<QuestionProps> = ({ userAddr }) => {
 
   const [questions, setQuestions] = useState<Market[]>([]); // Store submitted questions
   const contractAddress =
-    "0x00e1dd7b59ee3adb432e3704ef925cf096ce5b64507abc1f486308abaf79e585";
+    "0x014d6c3664f25b6d4cae0a144d769a69920f731b8cb8e8ff45f2e3870a4deddd"; // Poloycoin without owner constraint
+  //  "0x00e1dd7b59ee3adb432e3704ef925cf096ce5b64507abc1f486308abaf79e585"; // Polycoin
   const provider = new RpcProvider({
     nodeUrl: "https://starknet-sepolia.public.blastapi.io/rpc/v0_8",
   });
@@ -32,9 +34,8 @@ const Question: React.FC<QuestionProps> = ({ userAddr }) => {
 
   const contract = new Contract(abi, contractAddress, provider);
 
-  console.log(typeof contract);
-  const { account } = useAccount();
-  console.log("Account:", account); // Debugging log
+  /* const { account } = useAccount();
+  console.log("Account:", account); // Debugging log */
 
   const fetchNextQuestionId = async (): Promise<string | null> => {
     try {
@@ -120,8 +121,8 @@ const Question: React.FC<QuestionProps> = ({ userAddr }) => {
     } catch (error) {
       console.error("Error saving question:", error);
     }
-    if (account) {
-      contract.connect(account);
+    if (userAccount) {
+      contract.connect(userAccount);
     } else {
       alert("Please connect your account first.");
       return;

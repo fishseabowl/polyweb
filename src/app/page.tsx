@@ -13,7 +13,7 @@ const WalletBar = dynamic(() => import("../components/WalletBar"), {
 });
 
 const Page: React.FC = () => {
-  const { address: userAddress } = useAccount();
+  const { address: userAddress, account: userAccount } = useAccount();
   const {
     isLoading: balanceIsLoading,
     isError: balanceIsError,
@@ -67,7 +67,7 @@ const Page: React.FC = () => {
 
             {selectedPage === "prediction" &&
               (!balanceIsLoading && !balanceIsError && balanceData ? (
-                <Prediction userAddr={userAddress || ""} />
+                <Prediction userAddr={userAddress || ""} userAccount={userAccount ?? null}/>
               ) : (
                 <p className="text-red-500 text-lg">
                   Please connect your wallet first.
@@ -76,7 +76,7 @@ const Page: React.FC = () => {
 
             {selectedPage === "question" &&
               (!balanceIsLoading && !balanceIsError && balanceData ? (
-                <Question userAddr={userAddress || ""} />
+                <Question userAddr={userAddress || ""} userAccount={userAccount ?? null} />
               ) : (
                 <p className="text-red-500 text-lg">
                   Please connect your wallet first.
