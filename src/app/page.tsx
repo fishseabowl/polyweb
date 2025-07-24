@@ -67,7 +67,10 @@ const Page: React.FC = () => {
 
             {selectedPage === "prediction" &&
               (!balanceIsLoading && !balanceIsError && balanceData ? (
-                <Prediction userAddr={userAddress || ""} userAccount={userAccount ?? null}/>
+                <Prediction
+                  userAddr={userAddress ?? undefined}
+                  userAccount={userAccount ?? null}
+                />
               ) : (
                 <p className="text-red-500 text-lg">
                   Please connect your wallet first.
@@ -76,7 +79,10 @@ const Page: React.FC = () => {
 
             {selectedPage === "question" &&
               (!balanceIsLoading && !balanceIsError && balanceData ? (
-                <Question userAddr={userAddress || ""} userAccount={userAccount ?? null} />
+                <Question
+                  userAddr={userAddress ?? undefined}
+                  userAccount={userAccount ?? null}
+                />
               ) : (
                 <p className="text-red-500 text-lg">
                   Please connect your wallet first.

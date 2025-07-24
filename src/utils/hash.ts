@@ -15,13 +15,16 @@
 }
  */
 
-export async function getLow128BitsOfSHA256(input: string): Promise<string> {
+export async function getLow128BitsOfSHA256(input: string): Promise<bigint> {
   const encoder = new TextEncoder();
   const data = encoder.encode(input);
-  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-  const low128 = new Uint8Array(hashBuffer).slice(16); // last 16 bytes
+  const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+  const low128 = new Uint8Array(hashBuffer).slice(16); // last 16 bytes = low 128 bits
 
-  // Convert to base64
-  const base64 = btoa(String.fromCharCode(...low128));
-  return base64;
+  // Convert bytes to BigInt (u128)
+  let result = BigInt(0);
+  for (let i = 0; i < 16; i++) {
+    result = (result << BigInt(8)) + BigInt(low128[i]);
+  }
+  return result;
 }

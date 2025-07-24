@@ -7,7 +7,7 @@ import WinnerHistory from "./App/WinnerHistory";
 import { Market, Bet } from "./types";
 
 interface PredictionProps {
-  userAddr: string; // Get username from Page.tsx
+  userAddr: `0x${string}` | undefined; // Get username from Page.tsx
   userAccount: AccountInterface | null;
 }
 
@@ -18,7 +18,7 @@ const Prediction: React.FC<PredictionProps> = ({ userAddr, userAccount }) => {
   const [loading, setLoading] = useState<boolean>(false);
 
   const contractAddress =
-    "0x014d6c3664f25b6d4cae0a144d769a69920f731b8cb8e8ff45f2e3870a4deddd";   // Poloycoin without owner constraint
+    "0x014d6c3664f25b6d4cae0a144d769a69920f731b8cb8e8ff45f2e3870a4deddd"; // Poloycoin without owner constraint
   //  "0x00e1dd7b59ee3adb432e3704ef925cf096ce5b64507abc1f486308abaf79e585"; // Polycoin
   const provider = new RpcProvider({
     nodeUrl: "https://starknet-sepolia.public.blastapi.io/rpc/v0_8",

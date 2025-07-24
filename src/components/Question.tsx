@@ -7,7 +7,7 @@ import { polycoinAbi } from "./polycoin_abi";
 import { getLow128BitsOfSHA256 } from "../utils/hash";
 
 interface QuestionProps {
-  userAddr: string; // Get username from Page.tsx
+  userAddr: `0x${string}` | undefined; // Get username from Page.tsx
   userAccount: AccountInterface | null;
 }
 
@@ -127,9 +127,13 @@ const Question: React.FC<QuestionProps> = ({ userAddr, userAccount }) => {
       alert("Please connect your account first.");
       return;
     }
-    const timestamp: bigint = BigInt(Date.now());
+    /* const timestamp: bigint = BigInt(Date.now());
     const expirationTimestamp: bigint = BigInt(
       new Date(question.expiration).getTime(),
+    ); */
+    const timestamp = BigInt(Math.floor(Date.now() / 1000));
+    const expirationTimestamp = BigInt(
+      Math.floor(new Date(question.expiration).getTime() / 1000),
     );
     if (expirationTimestamp <= timestamp) {
       alert("Expiration date must be in the future.");
@@ -141,7 +145,7 @@ const Question: React.FC<QuestionProps> = ({ userAddr, userAccount }) => {
     }
 
     const titleHash = await getLow128BitsOfSHA256(question.title);
-   
+
     const myCall = contract.populate("create_question", [
       titleHash,
       expirationTimestamp,
@@ -205,7 +209,9 @@ const Question: React.FC<QuestionProps> = ({ userAddr, userAccount }) => {
                 <p className="text-gray-600">{q.description}</p>
                 <p className="text-gray-400">
                   Created by:{" "}
-                  {`${q.creator.slice(0, 6)}...${q.creator.slice(-4)}`}
+                  {q.creator
+                    ? `${q.creator.slice(0, 6)}...${q.creator.slice(-4)}`
+                    : "Unknown"}
                 </p>
               </li>
             ))}
