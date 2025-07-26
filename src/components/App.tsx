@@ -42,8 +42,8 @@ const App: React.FC = () => {
               <h3 className="text-lg font-semibold">{market.title}</h3>
               <p className="text-gray-600">Expires: {market.expiration}</p>
               <p className="text-gray-500">
-                Created by: {market.creator.slice(0, 6)}...
-                {market.creator.slice(-4)}
+                Created by: {market.creator?.slice(0, 6)}...
+                {market.creator?.slice(-4)}
               </p>
               <p className="text-green-600 font-semibold">
                 Total Bet Amount: {market.totalAmount || 0} STRK

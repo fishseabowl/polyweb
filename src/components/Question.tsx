@@ -2,7 +2,6 @@
 import { useState, useEffect } from "react";
 import { Market } from "./types";
 import { AccountInterface, Contract, RpcProvider } from "starknet";
-import { useAccount } from "@starknet-react/core";
 import { polycoinAbi } from "./polycoin_abi";
 import { getLow128BitsOfSHA256 } from "../utils/hash";
 

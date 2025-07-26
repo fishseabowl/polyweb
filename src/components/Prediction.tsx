@@ -28,6 +28,7 @@ const Prediction: React.FC<PredictionProps> = ({ userAddr, userAccount }) => {
 
   const contract = new Contract(abi, contractAddress, provider);
   console.log(typeof contract);
+
   // Fetch available markets
   useEffect(() => {
     const fetchMarkets = async () => {
@@ -124,6 +125,13 @@ const Prediction: React.FC<PredictionProps> = ({ userAddr, userAccount }) => {
       setLoading(false);
     }
   };
+
+  if (userAccount) {
+    contract.connect(userAccount);
+  } else {
+    alert("Please connect your account first.");
+    return;
+  }
 
   return (
     <div className="p-6">
