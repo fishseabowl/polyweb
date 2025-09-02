@@ -38,7 +38,9 @@ const Question: React.FC<QuestionProps> = ({ userAddr, userAccount }) => {
 
   const fetchNextQuestionId = async (): Promise<string | null> => {
     try {
-      const response = await fetch("https://ichain-backend.onrender.com/api/next-market-id");
+      const response = await fetch(
+        "https://ichain-backend.onrender.com/api/next-market-id",
+      );
       if (!response.ok) throw new Error("Failed to fetch question ID");
 
       const data = await response.json(); // Ensure response is JSON
@@ -53,7 +55,9 @@ const Question: React.FC<QuestionProps> = ({ userAddr, userAccount }) => {
   // 🔹 Fetch all submitted questions
   const fetchQuestions = async () => {
     try {
-      const response = await fetch("https://ichain-backend.onrender.com/api/markets");
+      const response = await fetch(
+        "https://ichain-backend.onrender.com/api/markets",
+      );
       const data = await response.json();
       if (Array.isArray(data)) {
         setQuestions(data);
@@ -95,11 +99,14 @@ const Question: React.FC<QuestionProps> = ({ userAddr, userAccount }) => {
     const newQuestion: Market = { ...question, id: nextId };
 
     try {
-      const response = await fetch("https://ichain-backend.onrender.com/api/save-market", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newQuestion),
-      });
+      const response = await fetch(
+        "https://ichain-backend.onrender.com/api/save-market",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(newQuestion),
+        },
+      );
 
       const data = await response.json();
       if (data.success) {

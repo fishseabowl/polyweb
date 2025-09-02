@@ -33,7 +33,9 @@ const Prediction: React.FC<PredictionProps> = ({ userAddr, userAccount }) => {
   useEffect(() => {
     const fetchMarkets = async () => {
       try {
-        const response = await fetch("https://ichain-backend.onrender.com/api/markets");
+        const response = await fetch(
+          "https://ichain-backend.onrender.com/api/markets",
+        );
         if (!response.ok) throw new Error("Failed to fetch markets");
         const data = await response.json();
         setMarkets(data);
@@ -76,17 +78,20 @@ const Prediction: React.FC<PredictionProps> = ({ userAddr, userAccount }) => {
     setLoading(true);
 
     try {
-      const response = await fetch("https://ichain-backend.onrender.com/api/save-bet", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          userId: userAddr,
-          marketId,
-          amount,
-          outcome,
-          date: new Date().toISOString(),
-        }),
-      });
+      const response = await fetch(
+        "https://ichain-backend.onrender.com/api/save-bet",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            userId: userAddr,
+            marketId,
+            amount,
+            outcome,
+            date: new Date().toISOString(),
+          }),
+        },
+      );
 
       const data = await response.json();
 

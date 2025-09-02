@@ -10,7 +10,9 @@ const App: React.FC = () => {
   useEffect(() => {
     const fetchMarkets = async () => {
       try {
-        const response = await fetch("https://ichain-backend.onrender.com/api/markets");
+        const response = await fetch(
+          "https://ichain-backend.onrender.com/api/markets",
+        );
         if (!response.ok) throw new Error("Failed to fetch market questions");
 
         const data: Market[] = await response.json();
